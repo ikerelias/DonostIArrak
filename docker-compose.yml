@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # --- HADOOP HDFS ---
   namenode:
@@ -27,7 +25,7 @@ services:
 
   # --- APACHE SPARK ---
   spark-master:
-    image: bde2020/spark-master:3.0.0-hadoop3.2
+    image: bde2020/spark-master:3.3.0-hadoop3.3
     container_name: spark-master
     ports:
       - "8080:8080"
@@ -36,7 +34,7 @@ services:
       - INIT_DAEMON=false
 
   spark-worker:
-    image: bde2020/spark-worker:3.0.0-hadoop3.2
+    image: bde2020/spark-worker:3.3.0-hadoop3.3
     container_name: spark-worker
     depends_on:
       - spark-master
@@ -47,7 +45,9 @@ services:
 
   # --- ENTORNO DE DESARROLLO (Jupyter + PySpark) ---
   jupyter:
-    image: jupyter/pyspark-notebook:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyter
     container_name: jupyter-pyspark
     ports:
       - "8888:8888"

@@ -1,2 +1,7 @@
 .ipynb_checkpoints/
 *.csv
+# Generated/downloaded Parquet outputs (recreate from the notebook)
+dataset_por_categoria/
+parquet_ML/
+dataset_por_categoria.zip
+parquet_ML.zip
