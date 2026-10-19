@@ -11,7 +11,7 @@
 1. Clona la rama del proyecto y entra en la carpeta:
 
    ```powershell
-   git clone --branch aitor-prueba1 https://github.com/ikerelias/DonostIArrak.git
+   git clone https://github.com/ikerelias/DonostIArrak.git
    cd DonostIArrak
    ```
 
@@ -84,3 +84,4 @@ En este entorno local de un solo DataNode, si sigue activo y bloquea el procesam
 ```powershell
 docker compose exec namenode hdfs dfsadmin -safemode leave
 ```
+
