@@ -1,0 +1,13 @@
+# NodeManager con Python3 para ejecutar mapper.py y reducer.py en YARN.
+# El Hadoop base usado por el proyecto esta basado en Debian 9 (stretch),
+# cuyos repositorios se encuentran archivados.
+FROM bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+
+RUN set -eux; \
+    printf 'deb http://archive.debian.org/debian stretch main\n' > /etc/apt/sources.list; \
+    rm -f /etc/apt/sources.list.d/*; \
+    printf 'Acquire::Check-Valid-Until "false";\n' > /etc/apt/apt.conf.d/99archive; \
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3; \
+    rm -rf /var/lib/apt/lists/*; \
+    python3 --version

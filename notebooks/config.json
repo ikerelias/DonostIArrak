@@ -1,0 +1,53 @@
+
+{
+  "interfaces": {
+    "jupyter": "http://localhost:8888",
+    "hdfs_namenode": "http://localhost:9870",
+    "hdfs_datanode": "http://localhost:9864",
+    "spark_master": "http://localhost:8080",
+    "spark_worker": "http://localhost:8081"
+  },
+  "servicios": {
+    "hdfs_host": "namenode",
+    "hdfs_port": 9000,
+    "spark_master_host": "spark-master",
+    "spark_master_port": 7077,
+    "spark_app_name": "ProyectoBigData",
+    "java_home": "/usr/lib/jvm/java-11-openjdk-amd64"
+  },
+  "rutas": {
+    "local_dataset_csv": "data/dataset.csv",
+    "local_categories_csv": "data/categorias_auxiliar.csv",
+    "hdfs_project_dir": "/donostiarrak",
+    "hdfs_raw_dir": "/donostiarrak/raw",
+    "hdfs_curated_dir": "/donostiarrak/curada",
+    "hdfs_results_dir": "/donostiarrak/resultados",
+    "dataset_filename": "dataset.csv",
+    "categories_filename": "categorias_auxiliar.csv",
+    "parquet_categorized_name": "dataset_por_categoria",
+    "parquet_ml_name": "parquet_ML_unif"
+  },
+  "procesamiento": {
+    "partition_column": "categoria",
+    "zone_equivalences": {
+      "Alde Zaharra": "Parte Vieja",
+      "Mirakruz-Bidebieta": "Miracruz-Bidebieta",
+      "Loiolako Erriberak": "Riberas de Loiola",
+      "Erdialdea": "Centro"
+    },
+    "original_columns": [
+      "email_id",
+      "texto",
+      "subcategoria",
+      "gestor_principal",
+      "gestor_secundario",
+      "zona",
+      "idioma",
+      "perfil_escritura",
+      "es_ambiguo",
+      "tiene_multiples_incidencias",
+      "familia_escenario",
+      "split"
+    ]
+  }
+}
