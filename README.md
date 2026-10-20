@@ -4,6 +4,50 @@ Proyecto de **Big Data & Cloud Computing (curso 2026–2027)** para procesar y a
 
 La aplicación integra la ingesta y limpieza de datos, almacenamiento en Parquet, agregaciones con Spark DataFrames y RDDs, comprobaciones de calidad y una línea base de clasificación con Spark MLlib. **Hadoop Streaming se ejecuta por separado**; no forma parte del ejecutor `run_pipeline.py`.
 
+## Inicio rápido: abrir JupyterLab
+
+Esta guía está pensada para alguien que descarga el repositorio por primera vez en **Windows con PowerShell**. La documentación técnica detallada continúa a partir de la sección 1.
+
+1. **Clonar el repositorio** (omitir este paso si ya se tiene una copia):
+
+   ```powershell
+   git clone https://github.com/ikerelias/DonostIArrak.git
+   cd DonostIArrak
+   ```
+
+   Mientras los cambios no estén integrados en `main`, seleccionar la rama que contiene el pipeline actualizado:
+
+   ```powershell
+   git switch aitor-prueba1
+   ```
+
+   Tras fusionar el Pull Request en `main`, bastará con clonar la rama predeterminada.
+
+2. **Colocar los archivos de entrada** en `notebooks/data/` con los nombres `dataset.csv` y `categorias_auxiliar.csv`. Los proporciona la fuente autorizada y **no se descargan desde GitHub**:
+
+   ```powershell
+   New-Item -ItemType Directory -Force .\notebooks\data
+   ```
+
+3. **Arrancar Docker Desktop** y, desde la raíz del repositorio, iniciar todos los servicios:
+
+   ```powershell
+   docker compose up -d --build
+   docker compose ps
+   ```
+
+   Esperar a que arranquen Jupyter, Spark y HDFS. La primera construcción puede tardar varios minutos.
+
+4. **Abrir JupyterLab** en el navegador: **<http://localhost:8888/lab>**. Si solicita un token, obtener el enlace de acceso en los registros:
+
+   ```powershell
+   docker logs jupyter-pyspark
+   ```
+
+5. **Abrir `prueba1.ipynb`** desde el explorador de archivos de JupyterLab, seleccionar el kernel de Python y ejecutar **celda a celda, en orden** (`Shift+Enter`). Antes de ejecutar las celdas que leen HDFS, realizar la carga inicial descrita en la [sección 5](#5-ingesta-inicial-en-hdfs), si todavía no está hecha.
+
+> **Importante:** abrir JupyterLab está documentado y probado en el entorno de desarrollo, pero **no se ha validado un `Run All` completo del notebook de 79 celdas**. Varias celdas escriben resultados con `overwrite` y las etapas de entrenamiento pueden requerir dependencias o recursos adicionales. Para una comprobación automatizada y aislada, utilizar el [smoke test del pipeline](#6-ejecutar-el-pipeline-spark).
+
 ## 1. Requisitos
 
 - Git y Docker Desktop con Docker Compose.
@@ -103,7 +147,7 @@ docker exec resourcemanager yarn node -list
 docker exec namenode hdfs dfsadmin -report
 ```
 
-El informe de HDFS debería identificar los DataNodes disponibles; YARN debería registrar al menos un NodeManager en estado `RUNNING`. Si se han levantado otros proyectos Docker con los mismos nombres de contenedor, resolver primero el conflicto sin eliminar sus volúmenes.
+El informe de HDFS debería identificar los DataNodes disponibles; YARN debería registrar al menos un NodeManager en estado `RUNNING`. Si se han levantado otros proyectos Docker con los mismos nombres de contenedor, resolver primero el conflicto sin eliminar sus volúmenes. En una instalación existente que se haya creado con `-p donostiarrak-nuevo`, mantener ese nombre de proyecto para las operaciones de Compose (por ejemplo, `docker compose -p donostiarrak-nuevo ps`).
 
 ### Interfaces
 
@@ -115,11 +159,21 @@ El informe de HDFS debería identificar los DataNodes disponibles; YARN debería
 | Spark Worker | <http://localhost:8081> |
 | YARN ResourceManager | <http://localhost:8088> |
 
-Para consultar el enlace de acceso/token de Jupyter:
+### Abrir y utilizar `prueba1.ipynb` en JupyterLab
 
-```powershell
-docker compose logs jupyter-pyspark
-```
+1. Con los contenedores arrancados, abrir **<http://localhost:8888/lab>**. También se puede acceder desde <http://localhost:8888>, que normalmente redirige a la interfaz de Jupyter.
+2. Si se solicita autenticación, copiar el **token** o la URL con token mostrada por:
+
+   ```powershell
+   docker logs jupyter-pyspark
+   ```
+
+   Si los contenedores se han iniciado desde este directorio con Compose, también se pueden consultar sus registros con `docker compose logs jupyter-pyspark`. No copiar tokens a GitHub ni al README.
+3. En el explorador de archivos de JupyterLab, abrir **`prueba1.ipynb`**. El directorio local `notebooks/` está montado dentro del contenedor como `/home/jovyan/work`, por lo que el notebook se muestra directamente en la carpeta inicial.
+4. Seleccionar el kernel **Python 3** disponible y ejecutar las celdas en orden con `Shift+Enter`. Antes de las primeras lecturas del dataset desde HDFS, comprobar que se han cargado los CSV de la [sección 5](#5-ingesta-inicial-en-hdfs).
+5. Si alguna celda falla, revisar el error y las variables de las celdas anteriores antes de continuar. **No usar `Run All` sobre los 15 millones de correos como primera prueba**: el notebook integrado aún no se ha validado por completo y algunas operaciones utilizan `.mode("overwrite")`.
+
+**Diferencia entre los dos modos de trabajo:** `prueba1.ipynb` permite examinar y ejecutar las etapas interactivamente; `run_pipeline.py` automatiza la ingesta, calidad, Parquet, agregaciones y MLlib. El comando `--smoke-test` de la sección 6 es la opción **ya validada** para comprobar el pipeline sobre 20.000 registros y con salidas aisladas. **No equivale a ejecutar todas las celdas del notebook.**
 
 ## 5. Ingesta inicial en HDFS
 
@@ -245,7 +299,9 @@ docker compose start
 
 ## 10. Problemas habituales
 
-- **Jupyter pide un token:** consultarlo con `docker compose logs jupyter-pyspark`.
+- **Jupyter pide un token:** consultarlo con `docker logs jupyter-pyspark` y abrir la URL que aparece en los registros. No publicar el token.
+- **Jupyter abre, pero falla la lectura de CSV:** comprobar que los CSV locales están en `notebooks/data/` y que los archivos necesarios existen en `/donostiarrak/raw` de HDFS (sección 5).
+- **El notebook falla con una librería ausente:** comprobar las dependencias instaladas en el kernel seleccionado; el éxito del `--smoke-test` no garantiza todas las dependencias de las celdas interactivas.
 - **Un puerto ya está en uso:** cerrar el servicio que lo ocupa o ajustar el mapeo de puertos; revisar `docker compose ps`.
 - **Nombre de contenedor en conflicto:** suele deberse a otro proyecto Compose con los mismos `container_name`; inspeccionarlo antes de eliminar o recrear servicios.
 - **HDFS Safe Mode:** comprobar primero `docker exec namenode hdfs dfsadmin -safemode get` y esperar a la salida automática. No forzar la desactivación si existen bloques ausentes o DataNodes no disponibles.
@@ -254,6 +310,6 @@ docker compose start
 
 ## 11. Alcance y pendientes de reproducibilidad
 
-La reconstrucción de `nodemanager1` y una prueba Hadoop Streaming/YARN con 20.000 correos finalizaron correctamente en el entorno del equipo; también se ejecutó dos veces el pipeline Spark de prueba. **Esto no sustituye una validación de instalación completamente limpia ni una ejecución final sobre los 15 millones de correos.**
+La reconstrucción de `nodemanager1` y una prueba Hadoop Streaming/YARN con 20.000 correos finalizaron correctamente en el entorno del equipo; también se ejecutó dos veces el pipeline Spark de prueba. **Esto no sustituye una validación de instalación completamente limpia, un `Run All` del notebook integrado ni una ejecución final sobre los 15 millones de correos.**
 
 Antes de entregar se debe añadir/verificar: el mecanismo de descarga y la licencia del dataset; las evidencias de los apartados A–F del enunciado; las mediciones de rendimiento sobre el dataset completo; y la compatibilidad final de los cambios al integrarse con `main`.
