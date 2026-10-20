@@ -1,0 +1,38 @@
+{
+  "spark": {
+    "executor_memory": "4g",
+    "executor_cores": 2,
+    "max_cores": 2,
+    "shuffle_partitions": 64
+  },
+  "calidad": {
+    "umbral_texto_corto": 20
+  },
+  "mapreduce": {
+    "reducers_spark": 2
+  },
+  "mllib": {
+    "fraction": 0.005,
+    "max_train": 30000,
+    "max_test": 10000,
+    "seed": 42,
+    "hashing_features": 4096
+  },
+  "salidas": {
+    "evaluados": "reto4_evaluados",
+    "cuarentena": "reto4_cuarentena",
+    "resumen_calidad": "reto4_resumen",
+    "incidencias_calidad": "reto4_incidencias",
+    "analitica_zona_familia": "mapreduce_zona_familia_spark",
+    "mapreduce_entrada": "mapreduce_entrada",
+    "spark_rdd": "mapreduce_spark_rdd_v3",
+    "mllib_metricas": "mllib_baseline_metricas"
+  },
+  "particiones_salida": {
+    "evaluados": 16,
+    "curado": 16,
+    "cuarentena": 8,
+    "informes": 1,
+    "mapreduce_entrada": 8
+  }
+}

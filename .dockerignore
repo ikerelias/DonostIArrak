@@ -1,0 +1,12 @@
+# Evita enviar archivos enormes al contexto de Docker Build.
+.git
+**/.ipynb_checkpoints
+**/__pycache__
+**/*.pyc
+notebooks/data/
+notebooks/outputs_*/
+**/*.csv
+**/*.parquet
+**/*.pt
+**/*.pth
+**/*.safetensors

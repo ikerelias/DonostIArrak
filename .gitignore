@@ -1,8 +1,15 @@
-.ipynb_checkpoints/
-*.csv
-# Generated/downloaded Parquet outputs (recreate from the notebook)
-dataset_por_categoria/
-parquet_ML/
-parquet_ML_unif/
-dataset_por_categoria.zip
-parquet_ML.zip
+﻿notebooks/data/
+data/
+**/.ipynb_checkpoints/
+**/__pycache__/
+*.pyc
+.venv/
+venv/
+spark-warehouse/
+*.parquet
+*.log
+backups/
+docker-compose (2).yml
+docker-compose-anterior.yml
+notebooks/outputs_donostia_50000/
+notebooks/prueba1-rescate.ipynb
