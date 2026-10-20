@@ -129,6 +129,7 @@ services:
     container_name: jupyter-pyspark
     ports:
       - "8888:8888"
+      - "4040:4040"
     volumes:
       - ./notebooks:/home/jovyan/work
     environment:
