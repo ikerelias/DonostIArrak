@@ -115,7 +115,13 @@ Hadoop no sobrescribe directorios. Para repetir el trabajo, borrar antes la sali
 docker exec namenode hdfs dfs -rm -r /donostiarrak/resultados/mapreduce_hadoop_streaming_v2
 ```
 
-**4. Comparar con Spark RDD:** abrir JupyterLab en <http://localhost:8888/lab> (si pide token, aparece en `docker logs jupyter-pyspark`) y, en `prueba1.ipynb`, la celda *PASO 19.11 - COMPARACIÓN HADOOP STREAMING VS SPARK RDD* lee `mapreduce_hadoop_streaming_v2` y `mapreduce_spark_rdd_v3`, los une por (zona, familia) y comprueba que no hay diferencias.
+**4. Comparar con Spark RDD** (la comparación solo está en el notebook, no en `run_pipeline.py`):
+
+1. Abrir <http://localhost:8888/lab> (si pide token: `docker logs jupyter-pyspark`) y abrir `prueba1.ipynb`.
+2. Ejecutar solo estas celdas, en orden (no hace falta el notebook entero):
+   - Las celdas de los **Pasos 1, 2 y 3** (configuración, Java y sesión de Spark).
+   - **PASO 19.10 - MAPREDUCE CON SPARK RDD**.
+   - **PASO 19.11 - COMPARACIÓN HADOOP STREAMING VS SPARK RDD**: debe terminar con `RESULTADOS IDÉNTICOS: VALIDACIÓN SUPERADA`.
 
 ## 8. Resultados y evidencias en HDFS
 
