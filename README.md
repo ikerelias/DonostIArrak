@@ -115,7 +115,7 @@ Hadoop no sobrescribe directorios. Para repetir el trabajo, borrar antes la sali
 docker exec namenode hdfs dfs -rm -r /donostiarrak/resultados/mapreduce_hadoop_streaming_v2
 ```
 
-**4. Comparar con Spark RDD:** en `prueba1.ipynb`, la celda *PASO 19.11 - COMPARACIÓN HADOOP STREAMING VS SPARK RDD* lee `mapreduce_hadoop_streaming_v2` y `mapreduce_spark_rdd_v3`, los une por (zona, familia) y comprueba que no hay diferencias.
+**4. Comparar con Spark RDD:** abrir JupyterLab en <http://localhost:8888/lab> (si pide token, aparece en `docker logs jupyter-pyspark`) y, en `prueba1.ipynb`, la celda *PASO 19.11 - COMPARACIÓN HADOOP STREAMING VS SPARK RDD* lee `mapreduce_hadoop_streaming_v2` y `mapreduce_spark_rdd_v3`, los une por (zona, familia) y comprueba que no hay diferencias.
 
 ## 8. Resultados y evidencias en HDFS
 
@@ -141,23 +141,7 @@ Bloques y replicación del dataset:
 docker exec namenode hdfs fsck /donostiarrak/raw/dataset.csv -files -blocks -locations
 ```
 
-## 9. Otros modos de ejecución
-
-- **Comprobar rutas sin escribir nada:**
-
-  ```powershell
-  docker exec -w /home/jovyan/work jupyter-pyspark python run_pipeline.py --check
-  ```
-
-- **Prueba de integración con 20.000 correos:** no copia nada a HDFS, por lo que necesita que los CSV ya estén en `/donostiarrak/raw` (por ejemplo, tras un `--run`). Usa recursos reducidos y escribe solo en `/donostiarrak/resultados/prueba_integracion/`, sin tocar las salidas oficiales. Se ejecutó dos veces seguidas sin errores y con los mismos recuentos.
-
-  ```powershell
-  docker exec -w /home/jovyan/work jupyter-pyspark /usr/local/spark/bin/spark-submit run_pipeline.py --smoke-test
-  ```
-
-- **Notebook interactivo:** abrir <http://localhost:8888/lab> (si pide token, aparece en `docker logs jupyter-pyspark`), abrir `prueba1.ipynb` y ejecutar las celdas en orden. Lee los datos de `/donostiarrak/raw`, así que conviene ejecutar antes la sección 6.
-
-## 10. Interfaces web
+## 9. Interfaces web
 
 | Interfaz | URL |
 | --- | --- |
@@ -167,7 +151,7 @@ docker exec namenode hdfs fsck /donostiarrak/raw/dataset.csv -files -blocks -loc
 | Spark Master / Worker | <http://localhost:8080> / <http://localhost:8081> |
 | YARN ResourceManager | <http://localhost:8088> |
 
-## 11. Parar el clúster
+## 10. Parar el clúster
 
 ```powershell
 docker compose stop
@@ -176,9 +160,9 @@ docker compose start
 
 No usar `docker compose down -v`: borra los volúmenes de HDFS y con ellos todos los datos y resultados.
 
-## 12. Problemas habituales
+## 11. Problemas habituales
 
-- **`ModuleNotFoundError: pyspark`:** lanzar `--run` y `--smoke-test` con `/usr/local/spark/bin/spark-submit`, no con `python`.
+- **`ModuleNotFoundError: pyspark`:** lanzar `--run` con `/usr/local/spark/bin/spark-submit`, no con `python`.
 - **`Falta fichero necesario`:** los CSV no están en `notebooks\data\` o tienen otro nombre.
 - **Nombre de contenedor en conflicto:** hay otro proyecto Compose con los mismos nombres (`namenode`, `jupyter-pyspark`...). Pararlo con `docker compose stop` desde su carpeta.
 - **HDFS en Safe Mode:** comprobar con `docker exec namenode hdfs dfsadmin -safemode get` y esperar a que salga solo.
