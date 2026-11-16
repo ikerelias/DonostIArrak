@@ -96,18 +96,7 @@ docker cp .\scripts\hadoop_streaming\reducer.py namenode:/tmp/reducer.py
 **2. Lanzar el trabajo en YARN:**
 
 ```powershell
-docker exec namenode hadoop jar /opt/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar `
-    -D "mapreduce.framework.name=yarn" `
-    -D "yarn.resourcemanager.hostname=resourcemanager" `
-    -D "yarn.app.mapreduce.am.env=HADOOP_MAPRED_HOME=/opt/hadoop-3.2.1" `
-    -D "mapreduce.map.env=HADOOP_MAPRED_HOME=/opt/hadoop-3.2.1" `
-    -D "mapreduce.reduce.env=HADOOP_MAPRED_HOME=/opt/hadoop-3.2.1" `
-    -D "mapreduce.job.reduces=2" `
-    -files file:///tmp/mapper.py,file:///tmp/reducer.py `
-    -input /donostiarrak/curada/mapreduce_entrada `
-    -output /donostiarrak/resultados/mapreduce_hadoop_streaming_v2 `
-    -mapper "python3 mapper.py" `
-    -reducer "python3 reducer.py"
+docker exec namenode hadoop jar /opt/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar -D "mapreduce.framework.name=yarn" -D "yarn.resourcemanager.hostname=resourcemanager" -D "yarn.app.mapreduce.am.env=HADOOP_MAPRED_HOME=/opt/hadoop-3.2.1" -D "mapreduce.map.env=HADOOP_MAPRED_HOME=/opt/hadoop-3.2.1" -D "mapreduce.reduce.env=HADOOP_MAPRED_HOME=/opt/hadoop-3.2.1" -D "mapreduce.job.reduces=2" -files file:///tmp/mapper.py,file:///tmp/reducer.py -input /donostiarrak/curada/mapreduce_entrada -output /donostiarrak/resultados/mapreduce_hadoop_streaming_v2 -mapper "python3 mapper.py" -reducer "python3 reducer.py"
 ```
 
 **3. Ver el resultado:**
