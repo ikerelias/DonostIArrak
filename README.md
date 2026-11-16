@@ -59,6 +59,13 @@ La primera vez tarda varios minutos en construir las imágenes. Se levantan nuev
 | `spark-master` y `spark-worker` | Procesamiento distribuido Spark |
 | `jupyter-pyspark` | Driver del pipeline y JupyterLab |
 
+**Solo la primera vez**, crear la carpeta del proyecto en HDFS y dar permisos al usuario del pipeline (`jovyan`):
+
+```powershell
+docker exec namenode hdfs dfs -mkdir -p /donostiarrak
+docker exec namenode hdfs dfs -chown -R jovyan /donostiarrak
+```
+
 ## 6. Ejecutar el pipeline Spark
 
 ```powershell
@@ -170,6 +177,7 @@ No usar `docker compose down -v`: borra los volúmenes de HDFS y con ellos todos
 
 - **`ModuleNotFoundError: pyspark`:** lanzar `--run` con `/usr/local/spark/bin/spark-submit`, no con `python`.
 - **`Falta fichero necesario`:** los CSV no están en `notebooks\data\` o tienen otro nombre.
+- **`Permission denied: user=jovyan`:** falta el paso de permisos en HDFS del final de la sección 5.
 - **Nombre de contenedor en conflicto:** hay otro proyecto Compose con los mismos nombres (`namenode`, `jupyter-pyspark`...). Pararlo con `docker compose stop` desde su carpeta.
 - **HDFS en Safe Mode:** comprobar con `docker exec namenode hdfs dfsadmin -safemode get` y esperar a que salga solo.
 - **La salida de Hadoop Streaming ya existe:** borrarla como se indica en la sección 7.
